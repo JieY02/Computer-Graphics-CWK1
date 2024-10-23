@@ -1,0 +1,19 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs
+/bin
+/blit-benchmark
+/draw2d
+/lib
+/lines-benchmark
+/lines-sandbox
+/lines-test
+/main
+/support
+/third_party
+/triangles-sandbox
+/triangles-test
+/vmlib
+/_build_/debug-x64-msc-v143/x64/debug
