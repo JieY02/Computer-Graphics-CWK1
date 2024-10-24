@@ -8,15 +8,34 @@
 
 void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor )
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
+	if (round(aBegin.x) == round(aEnd.x))
+	{
+		size_t xpos = aBegin.x;
+		int delta = ((int)aEnd.y - aBegin.y) / std::abs((int)aEnd.y - aBegin.y);
+		for (size_t ypos = aBegin.y; std::abs((int)ypos - aBegin.y) <= std::abs((int)aEnd.y - aBegin.y); ypos += delta)
+			aSurface.set_pixel_srgb(xpos, ypos, aColor);
 
-	//TODO: remove the following when you start your implementation
-	(void)aSurface; // Avoid warnings about unused arguments until the function
-	(void)aBegin;   // is properly implemented.
-	(void)aEnd;
-	(void)aColor;
+		return;
+	}
+
+	if (aBegin.x > aEnd.x) 
+	{
+		Vec2f tmp = aBegin;
+		aBegin = aEnd, aEnd = tmp;
+	}
+
+	float k = (aEnd.y - aBegin.y) / (aEnd.x - aBegin.x);
+	float b = aBegin.y - aBegin.x * k;
+	size_t lastYPos = aBegin.y;
+
+	for (size_t xpos = aBegin.x; xpos <= aEnd.x; ++xpos)
+	{
+		size_t ypos = round((float) xpos * k + b);
+		aSurface.set_pixel_srgb(xpos, lastYPos, aColor);
+		while(lastYPos!=ypos)
+			lastYPos += k > 0 ? 1 : -1,
+			aSurface.set_pixel_srgb(xpos, lastYPos, aColor);
+	}
 }
 
 void draw_triangle_wireframe( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorU8_sRGB aColor )
