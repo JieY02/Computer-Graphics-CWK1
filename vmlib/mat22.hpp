@@ -51,14 +51,13 @@ Vec2f operator*( Mat22f const& aLeft, Vec2f const& aRight ) noexcept
 inline
 Mat22f make_rotation_2d( float aAngle ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
+	float cosA = std::cos(aAngle);
+	float sinA = std::sin(aAngle);
 
-	//TODO: remove the following when you start your implementation
-	(void)aAngle; // Avoid warnings about unused arguments until the function
-	              // is properly implemented.
-	return Mat22f{ 1.f, 0.f, 0.f, 1.f };
+	return Mat22f{
+		cosA, -sinA,  // first row
+		sinA, cosA    // second row
+	};
 }
 
 #endif // MAT22_HPP_1F974C02_D0D1_4FBD_B5EE_A69C88112088
