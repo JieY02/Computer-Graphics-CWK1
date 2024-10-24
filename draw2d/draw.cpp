@@ -26,15 +26,17 @@ void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB 
 
 	float k = (aEnd.y - aBegin.y) / (aEnd.x - aBegin.x);
 	float b = aBegin.y - aBegin.x * k;
-	size_t lastYPos = aBegin.y;
+	size_t lastYPos = round(aBegin.y);
 
-	for (size_t xpos = aBegin.x; xpos <= aEnd.x; ++xpos)
+	for (size_t xpos = round(aBegin.x); xpos <= round(aEnd.x); ++xpos)
 	{
 		size_t ypos = round((float) xpos * k + b);
-		aSurface.set_pixel_srgb(xpos, lastYPos, aColor);
-		while(lastYPos!=ypos)
-			lastYPos += k > 0 ? 1 : -1,
-			aSurface.set_pixel_srgb(xpos, lastYPos, aColor);
+		
+		int delta = k > 0 ? 1 : -1;
+		for(size_t tmpYPos = lastYPos; tmpYPos * delta <= ypos * delta; tmpYPos += delta)
+			aSurface.set_pixel_srgb(xpos, tmpYPos, aColor);
+
+		lastYPos = ypos;
 	}
 }
 
