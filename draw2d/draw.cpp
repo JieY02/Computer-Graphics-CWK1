@@ -8,7 +8,7 @@
 
 void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor )
 {
-	if (aBegin.x == aEnd.x)
+	if (round(aBegin.x) == round(aEnd.x))
 	{
 		size_t xpos = aBegin.x;
 		int delta = ((int)aEnd.y - aBegin.y) / std::abs((int)aEnd.y - aBegin.y);
