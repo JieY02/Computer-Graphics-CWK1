@@ -82,31 +82,30 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 		};
 
 	auto draw_horizontal_line = [&](int y, int xStart, int xEnd) {
+		if (xStart > xEnd) std::swap(xStart, xEnd);
 		for (int x = xStart; x <= xEnd; ++x) {
 			if (is_within_bound(x, y)) aSurface.set_pixel_srgb(x, y, aColor);
 		}
 		};
 
 	auto interpolate_x = [](Vec2f p1, Vec2f p2, float y) -> int {
-		if (p1.y == p2.y) return static_cast<int>(p1.x); // Avoid division by zero
-		return static_cast<int>(p1.x + (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y));
+		if (p1.y == p2.y) return round(p1.x); // Avoid division by zero
+		return round(p1.x + (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y));
 		};
 
 	// Fill bottom flat triangle (aP0, aP1, aP2)
 	if (aP1.y == aP2.y) {
-		for (int y = static_cast<int>(aP0.y); y <= static_cast<int>(aP1.y); ++y) {
+		for (int y = round(aP0.y); y <= round(aP1.y); ++y) {
 			int xStart = interpolate_x(aP0, aP2, y);
 			int xEnd = interpolate_x(aP0, aP1, y);
-			if (xStart > xEnd) std::swap(xStart, xEnd);
 			draw_horizontal_line(y, xStart, xEnd);
 		}
 	}
 	// Fill top flat triangle (aP0, aP1, aP2)
 	else if (aP0.y == aP1.y) {
-		for (int y = static_cast<int>(aP0.y); y <= static_cast<int>(aP2.y); ++y) {
+		for (int y = round(aP0.y); y <= round(aP2.y); ++y) {
 			int xStart = interpolate_x(aP0, aP2, y);
 			int xEnd = interpolate_x(aP1, aP2, y);
-			if (xStart > xEnd) std::swap(xStart, xEnd);
 			draw_horizontal_line(y, xStart, xEnd);
 		}
 	}
@@ -114,17 +113,15 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 	else {
 		Vec2f aP3 = { interpolate_x(aP0, aP2, aP1.y), aP1.y };
 		// Draw bottom part of the triangle (aP0, aP1, aP3)
-		for (int y = static_cast<int>(aP0.y); y <= static_cast<int>(aP1.y); ++y) {
+		for (int y = round(aP0.y); y <= round(aP1.y); ++y) {
 			int xStart = interpolate_x(aP0, aP3, y);
 			int xEnd = interpolate_x(aP0, aP1, y);
-			if (xStart > xEnd) std::swap(xStart, xEnd);
 			draw_horizontal_line(y, xStart, xEnd);
 		}
 		// Draw top part of the triangle (aP1, aP3, aP2)
-		for (int y = static_cast<int>(aP1.y); y <= static_cast<int>(aP2.y); ++y) {
+		for (int y = round(aP1.y); y <= round(aP2.y); ++y) {
 			int xStart = interpolate_x(aP1, aP2, y);
 			int xEnd = interpolate_x(aP3, aP2, y);
-			if (xStart > xEnd) std::swap(xStart, xEnd);
 			draw_horizontal_line(y, xStart, xEnd);
 		}
 	}
