@@ -198,7 +198,6 @@ int main( int aArgc, char* aArgv[] ) try
 					{ 1.f, 0.f, 1.f },
 					{ 0.f, 1.f, 1.f }
 				);
-
 			} break;
 
 			case 2: {
@@ -227,6 +226,34 @@ int main( int aArgc, char* aArgv[] ) try
 
 			//TODO: your own sample cases here?
 			//TODO: your own sample cases here?
+
+			case 4: {
+				// Extending out of screen
+				draw_triangle_solid(surface,
+					{ float(fbwidth), fbheight - 100.f },
+					{ fbwidth / 2.f + 100.f, 100.f },
+					{ fbwidth * 3.f / 2.f - 100.f, 100.f },
+					{ 255, 255, 0 }
+				);
+			} break;
+
+			case 5: {
+				// Centered triangle, permuted coordinates
+				draw_triangle_solid(surface,
+					{ fbwidth - 100.f, 100.f },
+					{ fbwidth / 2.f, fbheight - 100.f },
+					{ 100.f, 100.f }, { 255, 255, 0 }
+				);
+			} break;
+
+			case 6: {
+				// Centered triangle
+				draw_triangle_solid(surface,
+					{ fbwidth / 2.f, fbheight - 100.f },
+					{ 100.f, 100.f },
+					{ fbwidth - 100.f, 100.f }, {255,255,0}
+				);
+			} break;
 		}
 		
 		context.draw( surface );
