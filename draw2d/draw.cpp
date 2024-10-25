@@ -8,33 +8,44 @@
 
 void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor )
 {
-	if (round(aBegin.x) == round(aEnd.x))
+	/*std::fprintf(stderr, "\naBegin: %.3f %.3f\n", aBegin.x, aBegin.y);
+	std::fprintf(stderr, "aEnd: %.3f %.3f\n", aEnd.x, aEnd.y);*/
+	int startX = round(aBegin.x);
+	int startY = round(aBegin.y);
+	int endX = round(aEnd.x);
+	int endY = round(aEnd.y);
+
+	if (startX == endX)
 	{
-		size_t xpos = aBegin.x;
-		int delta = ((int)aEnd.y - aBegin.y) / std::abs((int)aEnd.y - aBegin.y);
-		for (size_t ypos = aBegin.y; std::abs((int)ypos - aBegin.y) <= std::abs((int)aEnd.y - aBegin.y); ypos += delta)
-			aSurface.set_pixel_srgb(xpos, ypos, aColor);
+		int delta = (endY > startY) ? 1 : -1;
+		for (size_t ypos = startY; delta * (ypos - startY) <= delta * (endY - startY); ypos += delta)
+			aSurface.set_pixel_srgb(startX, ypos, aColor);
 
 		return;
 	}
 
-	if (aBegin.x > aEnd.x) 
-	{
-		Vec2f tmp = aBegin;
-		aBegin = aEnd, aEnd = tmp;
-	}
+	// Bresenham's line algorithm implementation
+	// Reference: 
+	int dx = abs(endX - startX);
+	int dy = abs(endY - startY);
+	int sx = (startX < endX) ? 1 : -1;
+	int sy = (startY < endY) ? 1 : -1;
+	int e_xy = dx - dy;
 
-	float k = (aEnd.y - aBegin.y) / (aEnd.x - aBegin.x);
-	float b = aBegin.y - aBegin.x * k;
-	size_t lastYPos = aBegin.y;
+	while (startX != endX || startY != endY) {
+		// Set the pixel at the current point
+		aSurface.set_pixel_srgb(startX, startY, aColor);
 
-	for (size_t xpos = aBegin.x; xpos <= aEnd.x; ++xpos)
-	{
-		size_t ypos = round((float) xpos * k + b);
-		aSurface.set_pixel_srgb(xpos, lastYPos, aColor);
-		while(lastYPos!=ypos)
-			lastYPos += k > 0 ? 1 : -1,
-			aSurface.set_pixel_srgb(xpos, lastYPos, aColor);
+		// Calculate error term and adjust coordinates
+		int e2 = 2 * e_xy;
+		if (e2 > -dy) {
+			e_xy -= dy;
+			startX += sx;
+		}
+		if (e2 < dx) {
+			e_xy += dx;
+			startY += sy;
+		}
 	}
 }
 
