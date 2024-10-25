@@ -6,20 +6,24 @@
 
 #include "surface.hpp"
 
-void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor )
+void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor)
 {
-	/*std::fprintf(stderr, "\naBegin: %.3f %.3f\n", aBegin.x, aBegin.y);
-	std::fprintf(stderr, "aEnd: %.3f %.3f\n", aEnd.x, aEnd.y);*/
 	int startX = round(aBegin.x);
 	int startY = round(aBegin.y);
 	int endX = round(aEnd.x);
 	int endY = round(aEnd.y);
 
+	auto is_within_bound = [&] (int xpos, int ypos) -> bool {
+		auto height = aSurface.get_height();
+		auto width = aSurface.get_width();
+		return (xpos < width) && (xpos >= 0) && (ypos < height) && (ypos >= 0);
+		};
+
 	if (startX == endX)
 	{
 		int delta = (endY > startY) ? 1 : -1;
 		for (size_t ypos = startY; delta * (ypos - startY) <= delta * (endY - startY); ypos += delta)
-			aSurface.set_pixel_srgb(startX, ypos, aColor);
+			if(is_within_bound(startX, ypos)) aSurface.set_pixel_srgb(startX, ypos, aColor);
 
 		return;
 	}
@@ -34,7 +38,8 @@ void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB 
 
 	while (startX != endX || startY != endY) {
 		// Set the pixel at the current point
-		aSurface.set_pixel_srgb(startX, startY, aColor);
+		if(is_within_bound(startX, startY))
+			aSurface.set_pixel_srgb(startX, startY, aColor);
 
 		// Calculate error term and adjust coordinates
 		int e2 = 2 * e_xy;
