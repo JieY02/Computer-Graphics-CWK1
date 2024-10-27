@@ -254,6 +254,37 @@ int main( int aArgc, char* aArgv[] ) try
 					{ fbwidth - 100.f, 100.f }, {255,255,0}
 				);
 			} break;
+				 
+			case 7: {
+				// 1 degree triangle
+				draw_triangle_solid(surface,
+					{ 0.f, 0.f },
+					{ (fbwidth + fbheight) / 12.f / 15.f, 0.f },
+					{ fbwidth / 2.f, fbheight / 2.f }, 
+					{ 255,255,0 }
+				);
+			} break;
+
+			case 8: {
+				// 10 degree triangle
+				draw_triangle_solid(surface,
+					{ 0.f, 0.f },
+					{ (fbwidth + fbheight) / 18.f, 0.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 255,255,0 }
+				);
+			} break;
+
+			case 9: {
+				// 15 degree triangle
+				draw_triangle_solid(surface,
+					{ 0.f, 0.f },
+					{ (fbwidth + fbheight) / 12.f, 0.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 255,255,0 }
+				);
+			} break;
+
 		}
 		
 		context.draw( surface );
