@@ -93,6 +93,10 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 		return round(p1.x + (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y));
 		};
 
+	draw_line_solid(aSurface, aP0, aP1, aColor);
+	draw_line_solid(aSurface, aP0, aP2, aColor);
+	draw_line_solid(aSurface, aP2, aP1, aColor);
+
 	// Fill bottom flat triangle (aP0, aP1, aP2)
 	if (aP1.y == aP2.y) {
 		for (int y = round(aP0.y); y <= round(aP1.y); ++y) {
@@ -129,18 +133,51 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 
 void draw_triangle_interp( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorF aC0, ColorF aC1, ColorF aC2 )
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
+	if (aP0.y > aP1.y) std::swap(aP0, aP1), std::swap(aC0, aC1);
+	if (aP0.y > aP2.y) std::swap(aP0, aP2), std::swap(aC0, aC2);
+	if (aP1.y > aP2.y) std::swap(aP1, aP2), std::swap(aC1, aC2);
 
-	//TODO: remove the following when you start your implementation
-	(void)aSurface; // Avoid warnings about unused arguments until the function
-	(void)aP0;      // is properly implemented.
-	(void)aP1;
-	(void)aP2;
-	(void)aC0;
-	(void)aC1;
-	(void)aC2;
+	auto is_within_bound = [&](int xpos, int ypos) -> bool {
+		auto height = aSurface.get_height();
+		auto width = aSurface.get_width();
+		return (xpos < width) && (xpos >= 0) && (ypos < height) && (ypos >= 0);
+		};
+	
+	auto barycentric_weights = [](Vec2f p, Vec2f v0, Vec2f v1, Vec2f v2) -> std::tuple<float, float, float> {
+		float denom = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
+		float lambda0 = ((v1.y - v2.y) * (p.x - v2.x) + (v2.x - v1.x) * (p.y - v2.y)) / denom;
+		float lambda1 = ((v2.y - v0.y) * (p.x - v2.x) + (v0.x - v2.x) * (p.y - v2.y)) / denom;
+		float lambda2 = 1.0f - lambda0 - lambda1;
+		return { lambda0, lambda1, lambda2 };
+		};
+	
+	auto convert_to_srgb = [](ColorF color) -> ColorU8_sRGB {
+		auto to_srgb = [](float linear) {
+			return linear <= 0.0031308f ? linear * 12.92f : 1.055f * pow(linear, 1 / 2.4f) - 0.055f;
+			};
+		return ColorU8_sRGB{
+			static_cast<uint8_t>(std::clamp(to_srgb(color.r) * 255, 0.f, 255.f)),
+			static_cast<uint8_t>(std::clamp(to_srgb(color.g) * 255, 0.f, 255.f)),
+			static_cast<uint8_t>(std::clamp(to_srgb(color.b) * 255, 0.f, 255.f))
+		};
+		};
+
+	for (int y = std::floor(aP0.y); y <= std::ceil(aP2.y); ++y) {
+		for (int x = std::floor(std::min({ aP0.x, aP1.x, aP2.x })); x <= std::ceil(std::max({ aP0.x, aP1.x, aP2.x })); ++x) {
+			Vec2f p = { static_cast<float>(x), static_cast<float>(y) };
+			auto [lambda0, lambda1, lambda2] = barycentric_weights(p, aP0, aP1, aP2);
+
+			// If point is inside triangle
+			if (lambda0 >= 0 && lambda1 >= 0 && lambda2 >= 0) {
+				ColorF interpolated_color = {
+					lambda0 * aC0.r + lambda1 * aC1.r + lambda2 * aC2.r,
+					lambda0 * aC0.g + lambda1 * aC1.g + lambda2 * aC2.g,
+					lambda0 * aC0.b + lambda1 * aC1.b + lambda2 * aC2.b
+				};
+				if (is_within_bound(x, y)) aSurface.set_pixel_srgb(x, y, convert_to_srgb(interpolated_color));
+			}
+		}
+	}
 }
 
 
