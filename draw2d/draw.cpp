@@ -29,7 +29,6 @@ void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB a
 	}
 
 	// Bresenham's line algorithm implementation
-	// Reference: 
 	int dx = abs(endX - startX);
 	int dy = abs(endY - startY);
 	int sx = (startX < endX) ? 1 : -1;
@@ -89,7 +88,7 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 		};
 
 	auto interpolate_x = [](Vec2f p1, Vec2f p2, float y) -> int {
-		if (p1.y == p2.y) return round(p1.x); // Avoid division by zero
+		if (p1.y == p2.y) return round(p1.x); 
 		return round(p1.x + (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y));
 		};
 
@@ -97,7 +96,7 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 	draw_line_solid(aSurface, aP0, aP2, aColor);
 	draw_line_solid(aSurface, aP2, aP1, aColor);
 
-	// Fill bottom flat triangle (aP0, aP1, aP2)
+	// Bottom flat
 	if (aP1.y == aP2.y) {
 		for (int y = round(aP0.y); y <= round(aP1.y); ++y) {
 			int xStart = interpolate_x(aP0, aP2, y);
@@ -105,7 +104,7 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 			draw_horizontal_line(y, xStart, xEnd);
 		}
 	}
-	// Fill top flat triangle (aP0, aP1, aP2)
+	// Top flat triangle
 	else if (aP0.y == aP1.y) {
 		for (int y = round(aP0.y); y <= round(aP2.y); ++y) {
 			int xStart = interpolate_x(aP0, aP2, y);
@@ -113,7 +112,7 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 			draw_horizontal_line(y, xStart, xEnd);
 		}
 	}
-	// General case, split the triangle at the y-level of aP1
+	// General case
 	else {
 		Vec2f aP3 = { interpolate_x(aP0, aP2, aP1.y), aP1.y };
 		// Draw bottom part of the triangle (aP0, aP1, aP3)
@@ -167,7 +166,6 @@ void draw_triangle_interp(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 			Vec2f p = { static_cast<float>(x), static_cast<float>(y) };
 			auto [lambda0, lambda1, lambda2] = barycentric_weights(p, aP0, aP1, aP2);
 
-			// If point is inside triangle
 			if (lambda0 >= 0 && lambda1 >= 0 && lambda2 >= 0) {
 				ColorF interpolated_color = {
 					lambda0 * aC0.r + lambda1 * aC1.r + lambda2 * aC2.r,
