@@ -131,7 +131,7 @@ void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 	}
 }
 
-void draw_triangle_interp( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorF aC0, ColorF aC1, ColorF aC2 )
+void draw_triangle_interp(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorF aC0, ColorF aC1, ColorF aC2)
 {
 	if (aP0.y > aP1.y) std::swap(aP0, aP1), std::swap(aC0, aC1);
 	if (aP0.y > aP2.y) std::swap(aP0, aP2), std::swap(aC0, aC2);
@@ -142,11 +142,6 @@ void draw_triangle_interp( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, C
 		auto width = aSurface.get_width();
 		return (xpos < width) && (xpos >= 0) && (ypos < height) && (ypos >= 0);
 		};
-	
-	auto interpolate_x = [](Vec2f p1, Vec2f p2, float y) -> int {
-		if (p1.y == p2.y) return round(p1.x); // Avoid division by zero
-		return round(p1.x + (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y));
-		};
 
 	auto barycentric_weights = [](Vec2f p, Vec2f v0, Vec2f v1, Vec2f v2) -> std::tuple<float, float, float> {
 		float denom = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
@@ -155,7 +150,7 @@ void draw_triangle_interp( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, C
 		float lambda2 = 1.0f - lambda0 - lambda1;
 		return { lambda0, lambda1, lambda2 };
 		};
-	
+
 	auto convert_to_srgb = [](ColorF color) -> ColorU8_sRGB {
 		auto to_srgb = [](float linear) {
 			return linear <= 0.0031308f ? linear * 12.92f : 1.055f * pow(linear, 1 / 2.4f) - 0.055f;
@@ -167,50 +162,20 @@ void draw_triangle_interp( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, C
 		};
 		};
 
-	auto draw_horizontal_line_interp = [&](int y, int xStart, int xEnd) {
-		if (xStart > xEnd) std::swap(xStart, xEnd);
-		for (int x = xStart; x <= xEnd; ++x) {
+	for (int y = std::floor(aP0.y); y <= std::ceil(aP2.y); ++y) {
+		for (int x = std::floor(std::min({ aP0.x, aP1.x, aP2.x })); x <= std::ceil(std::max({ aP0.x, aP1.x, aP2.x })); ++x) {
 			Vec2f p = { static_cast<float>(x), static_cast<float>(y) };
 			auto [lambda0, lambda1, lambda2] = barycentric_weights(p, aP0, aP1, aP2);
-			ColorF interpolated_color = {
-				lambda0 * aC0.r + lambda1 * aC1.r + lambda2 * aC2.r,
-				lambda0 * aC0.g + lambda1 * aC1.g + lambda2 * aC2.g,
-				lambda0 * aC0.b + lambda1 * aC1.b + lambda2 * aC2.b
-			};
-			if (is_within_bound(x, y)) aSurface.set_pixel_srgb(x, y, convert_to_srgb(interpolated_color));
-		}
-		};
 
-	// Fill bottom flat triangle (aP0, aP1, aP2)
-	if (aP1.y == aP2.y) {
-		for (int y = round(aP0.y); y <= round(aP1.y); ++y) {
-			int xStart = interpolate_x(aP0, aP2, y);
-			int xEnd = interpolate_x(aP0, aP1, y);
-			draw_horizontal_line_interp(y, xStart, xEnd);
-		}
-	}
-	// Fill top flat triangle (aP0, aP1, aP2)
-	else if (aP0.y == aP1.y) {
-		for (int y = round(aP0.y); y <= round(aP2.y); ++y) {
-			int xStart = interpolate_x(aP0, aP2, y);
-			int xEnd = interpolate_x(aP1, aP2, y);
-			draw_horizontal_line_interp(y, xStart, xEnd);
-		}
-	}
-	// General case, split the triangle at the y-level of aP1
-	else {
-		Vec2f aP3 = { interpolate_x(aP0, aP2, aP1.y), aP1.y };
-		// Draw bottom part of the triangle (aP0, aP1, aP3)
-		for (int y = round(aP0.y); y <= round(aP1.y); ++y) {
-			int xStart = interpolate_x(aP0, aP3, y);
-			int xEnd = interpolate_x(aP0, aP1, y);
-			draw_horizontal_line_interp(y, xStart, xEnd);
-		}
-		// Draw top part of the triangle (aP1, aP3, aP2)
-		for (int y = round(aP1.y); y <= round(aP2.y); ++y) {
-			int xStart = interpolate_x(aP1, aP2, y);
-			int xEnd = interpolate_x(aP3, aP2, y);
-			draw_horizontal_line_interp(y, xStart, xEnd);
+			// If point is inside triangle
+			if (lambda0 >= 0 && lambda1 >= 0 && lambda2 >= 0) {
+				ColorF interpolated_color = {
+					lambda0 * aC0.r + lambda1 * aC1.r + lambda2 * aC2.r,
+					lambda0 * aC0.g + lambda1 * aC1.g + lambda2 * aC2.g,
+					lambda0 * aC0.b + lambda1 * aC1.b + lambda2 * aC2.b
+				};
+				if (is_within_bound(x, y)) aSurface.set_pixel_srgb(x, y, convert_to_srgb(interpolated_color));
+			}
 		}
 	}
 }
