@@ -230,9 +230,9 @@ int main( int aArgc, char* aArgv[] ) try
 			case 4: {
 				// 1-degree
 				draw_triangle_interp(surface,
-					{ 0.f, 0.f },
-					{ (fbwidth + fbheight) / 12.f / 15.f, 0.f },
+					{ 0.f, fbheight / 2.f },
 					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(1.f * 3.14 / 180.f) },
 					{ 1.f, 1.f, 0.f },
 					{ 1.f, 0.f, 1.f },
 					{ 0.f, 1.f, 1.f }
@@ -242,9 +242,9 @@ int main( int aArgc, char* aArgv[] ) try
 			case 5: {
 				// 10-degree
 				draw_triangle_interp(surface,
-					{ 0.f, 0.f },
-					{ (fbwidth + fbheight) / 18.f, 0.f },
+					{ 0.f, fbheight / 2.f },
 					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(10.f * 3.14 / 180.f) },
 					{ 1.f, 1.f, 0.f },
 					{ 1.f, 0.f, 1.f },
 					{ 0.f, 1.f, 1.f }
@@ -254,9 +254,9 @@ int main( int aArgc, char* aArgv[] ) try
 			case 6: {
 				// 15-degree
 				draw_triangle_interp(surface,
-					{ 0.f, 0.f },
-					{ (fbwidth + fbheight) / 12.f, 0.f },
+					{ 0.f, fbheight / 2.f },
 					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(15.f * 3.14 / 180.f) },
 					{ 1.f, 1.f, 0.f },
 					{ 1.f, 0.f, 1.f },
 					{ 0.f, 1.f, 1.f }
@@ -266,9 +266,9 @@ int main( int aArgc, char* aArgv[] ) try
 			case 7: {
 				// 1 degree triangle
 				draw_triangle_solid(surface,
-					{ 0.f, 0.f },
-					{ (fbwidth + fbheight) / 12.f / 15.f, 0.f },
-					{ fbwidth / 2.f, fbheight / 2.f }, 
+					{ 0.f, fbheight / 2.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(1.f * 3.14 / 180.f) },
 					{ 255,255,0 }
 				);
 			} break;
@@ -276,9 +276,9 @@ int main( int aArgc, char* aArgv[] ) try
 			case 8: {
 				// 10 degree triangle
 				draw_triangle_solid(surface,
-					{ 0.f, 0.f },
-					{ (fbwidth + fbheight) / 18.f, 0.f },
+					{ 0.f, fbheight / 2.f },
 					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(10.f * 3.14 / 180.f) },
 					{ 255,255,0 }
 				);
 			} break;
@@ -286,13 +286,21 @@ int main( int aArgc, char* aArgv[] ) try
 			case 9: {
 				// 15 degree triangle
 				draw_triangle_solid(surface,
-					{ 0.f, 0.f },
-					{ (fbwidth + fbheight) / 12.f, 0.f },
+					{ 0.f, fbheight / 2.f },
 					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(15.f * 3.14 / 180.f) },
 					{ 255,255,0 }
 				);
 			} break;
-
+			case 0: {
+				// 1 degree triangle
+				draw_triangle_solid(surface,
+					{ 0.f, 0.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(1.f * 3.1415 / 180.0f)), 0.f },
+					{ 255,255,0 }
+				);
+			} break;
 		}
 		
 		context.draw( surface );
