@@ -51,6 +51,8 @@ void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB a
 			startY += sy;
 		}
 	}
+	if (is_within_bound(endX, endY))
+		aSurface.set_pixel_srgb(endX, endY, aColor);
 }
 
 void draw_triangle_wireframe( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorU8_sRGB aColor )
@@ -136,6 +138,8 @@ void draw_triangle_interp(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 	if (aP0.y > aP2.y) std::swap(aP0, aP2), std::swap(aC0, aC2);
 	if (aP1.y > aP2.y) std::swap(aP1, aP2), std::swap(aC1, aC2);
 
+	constexpr float edge_tolerance = -0.000001f;
+
 	auto is_within_bound = [&](int xpos, int ypos) -> bool {
 		auto height = aSurface.get_height();
 		auto width = aSurface.get_width();
@@ -166,7 +170,7 @@ void draw_triangle_interp(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 			Vec2f p = { static_cast<float>(x), static_cast<float>(y) };
 			auto [lambda0, lambda1, lambda2] = barycentric_weights(p, aP0, aP1, aP2);
 
-			if (lambda0 >= 0 && lambda1 >= 0 && lambda2 >= 0) {
+			if (lambda0 >= edge_tolerance && lambda1 >= edge_tolerance && lambda2 >= edge_tolerance) {
 				ColorF interpolated_color = {
 					lambda0 * aC0.r + lambda1 * aC1.r + lambda2 * aC2.r,
 					lambda0 * aC0.g + lambda1 * aC1.g + lambda2 * aC2.g,
