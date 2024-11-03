@@ -85,12 +85,12 @@ TEST_CASE("Long&Short test", "[Accuracy]")
 	{
 		draw_line_solid(surface,
 			{ 100.f, 0.f },
-			{ 11.f, 120.f },
+			{ 101.f, 120.f },
 			{ 255, 255, 255 }
 		);
 		draw_line_solid(surface,
 			{ 100.f, 0.f },
-			{ 12.f, 240.f },
+			{ 102.f, 240.f },
 			{ 255, 255, 0 }
 		);
 

@@ -44,7 +44,7 @@ TEST_CASE("Straight Line", "[Straight]")
 				return a.second < b.second;
 			});
 
-		REQUIRE((is_x_monotonic || is_y_monotonic));
+		REQUIRE((is_x_monotonic && is_y_monotonic));
 	}
 
 	SECTION("horizontal")
@@ -79,7 +79,7 @@ TEST_CASE("Straight Line", "[Straight]")
 				return a.second < b.second;
 			});
 
-		REQUIRE((is_x_monotonic || is_y_monotonic));
+		REQUIRE((is_x_monotonic && is_y_monotonic));
 	}
 
 	SECTION("steep-virtical")
@@ -114,7 +114,7 @@ TEST_CASE("Straight Line", "[Straight]")
 				return a.second < b.second;
 			});
 
-		REQUIRE((is_x_monotonic || is_y_monotonic));
+		REQUIRE((is_x_monotonic && is_y_monotonic));
 	}
 
 	SECTION("steep-horizontal")
@@ -149,6 +149,6 @@ TEST_CASE("Straight Line", "[Straight]")
 				return a.second < b.second;
 			});
 
-		REQUIRE((is_x_monotonic || is_y_monotonic));
+		REQUIRE((is_x_monotonic && is_y_monotonic));
 	}
 }
