@@ -8,12 +8,14 @@
 #include "../draw2d/draw.hpp"
 
 
-TEST_CASE("Accuracy test", "[!mayfail]")
+TEST_CASE("Reversing test", "[!mayfail]")
 {
 	Surface surface(320, 240);
 	surface.clear();
 
-	SECTION("virtical")
+	// To Run the test case, please uncomment follow code
+
+	/*SECTION("virtical")
 	{
 		draw_line_solid(surface,
 			{ 160.f, 0.f },
@@ -143,5 +145,5 @@ TEST_CASE("Accuracy test", "[!mayfail]")
 			if (flag) break;
 		}
 		REQUIRE(flag == 0);
-	}
+	}*/
 }

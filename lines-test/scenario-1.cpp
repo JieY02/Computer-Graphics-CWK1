@@ -36,6 +36,8 @@ TEST_CASE("No Gap(Lines)", "[Gap]")
 		draw_line_solid(surface, p2, p1, { 255, 255, 255 });
 
 		auto const counts = count_pixel_neighbours(surface);
+		auto const pixels = max_col_pixel_count(surface);
+		REQUIRE(1 == pixels);
 		REQUIRE(counts[1] == 2);
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
 		REQUIRE(0 == counts[0]); // No isolated pixels
@@ -69,10 +71,8 @@ TEST_CASE("No Gap(Lines)", "[Gap]")
 			{ 255, 255, 255 }
 		);
 		auto const counts = count_pixel_neighbours(surface);
-
-		// if using round() or ceil(), counts[1] should be 2
-		// if using floor(), counts[1] will be 3
-
+		auto const pixels = max_col_pixel_count(surface);
+		REQUIRE(2 == pixels);
 		REQUIRE(((counts[3] == 2 && counts[1] == 3) || (counts[1] == 2)));
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
 		REQUIRE(0 == counts[0]); // No isolated pixels
@@ -91,9 +91,8 @@ TEST_CASE("No Gap(Lines)", "[Gap]")
 			{ 255, 255, 255 }
 		);
 		auto const counts = count_pixel_neighbours(surface);
-
-		// if using ceil(), counts[1] should be 2
-		// if using round() or floor(), counts[1] should be 3
+		auto const pixels = max_col_pixel_count(surface);
+		REQUIRE(2 == pixels);
 		REQUIRE(((counts[3] == 2 && counts[1] == 3) || (counts[1] == 2)));
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
 		REQUIRE(0 == counts[0]); // No isolated pixels
@@ -112,6 +111,9 @@ TEST_CASE("No Gap(Lines)", "[Gap]")
 			{ 255, 255, 255 }
 		);
 		auto const counts = count_pixel_neighbours(surface);
+
+		auto const pixels = max_col_pixel_count(surface);
+		REQUIRE(2 == pixels);
 
 		// if using ceil(), counts[1] should be 2
 		// if using round() or floor(), counts[1] should be 3
@@ -140,10 +142,32 @@ TEST_CASE("Intersection Point", "[Intersection]")
 			{ fbwidth - (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(1.f * 3.1415 / 180.0f)), fbheight * 1.f },
 			{ 255, 255, 255 }
 		);
+
+		Vec2f midPoint = { fbwidth / 2.f, fbheight / 2.f };
+		auto const stride = surface.get_width() << 2;
+		std::size_t inCol = 0;
+		for (std::uint32_t y = 0; y < surface.get_height(); ++y)
+		{
+			auto const idx = y * stride + (static_cast<std::uint32_t>(midPoint.x) << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inCol;
+		}
+		std::size_t inRow = 0;
+		for (std::uint32_t x = 0; x < surface.get_width(); ++x)
+		{
+			auto const idx = static_cast<std::uint32_t>(midPoint.y) * stride + (x << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inRow;
+		}
+		REQUIRE(std::min(inCol, inRow) == 1);
+
 		auto const counts = count_pixel_neighbours(surface);
 		REQUIRE(counts[1] == 4); // Four endpoints with one neighbor each
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
-		REQUIRE(((counts[3] >= 2 && counts[4] == 0) || (counts[4] == 1)));
 		REQUIRE(0 == counts[0]); // No isolated pixels
 	}
 
@@ -159,10 +183,32 @@ TEST_CASE("Intersection Point", "[Intersection]")
 			{ fbwidth - (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(10.f * 3.1415 / 180.0f)), fbheight * 1.f },
 			{ 255, 255, 255 }
 		);
+
+		Vec2f midPoint = { fbwidth / 2.f, fbheight / 2.f };
+		auto const stride = surface.get_width() << 2;
+		std::size_t inCol = 0;
+		for (std::uint32_t y = 0; y < surface.get_height(); ++y)
+		{
+			auto const idx = y * stride + (static_cast<std::uint32_t>(midPoint.x) << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inCol;
+		}
+		std::size_t inRow = 0;
+		for (std::uint32_t x = 0; x < surface.get_width(); ++x)
+		{
+			auto const idx = static_cast<std::uint32_t>(midPoint.y) * stride + (x << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inRow;
+		}
+		REQUIRE(std::min(inCol, inRow) == 1);
+
 		auto const counts = count_pixel_neighbours(surface);
 		REQUIRE(counts[1] == 4); // Four endpoints with one neighbor each
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
-		REQUIRE(((counts[3] >= 2 && counts[4] == 0) || (counts[4] == 1)));
 		REQUIRE(0 == counts[0]); // No isolated pixels
 	}
 
@@ -178,10 +224,32 @@ TEST_CASE("Intersection Point", "[Intersection]")
 			{ fbwidth - (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(15.f * 3.1415 / 180.0f)), fbheight * 1.f },
 			{ 255, 255, 255 }
 		);
+
+		Vec2f midPoint = { fbwidth / 2.f, fbheight / 2.f };
+		auto const stride = surface.get_width() << 2;
+		std::size_t inCol = 0;
+		for (std::uint32_t y = 0; y < surface.get_height(); ++y)
+		{
+			auto const idx = y * stride + (static_cast<std::uint32_t>(midPoint.x) << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inCol;
+		}
+		std::size_t inRow = 0;
+		for (std::uint32_t x = 0; x < surface.get_width(); ++x)
+		{
+			auto const idx = static_cast<std::uint32_t>(midPoint.y) * stride + (x << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inRow;
+		}
+		REQUIRE(std::min(inCol, inRow) == 1);
+
 		auto const counts = count_pixel_neighbours(surface);
 		REQUIRE(counts[1] == 4); // Four endpoints with one neighbor each
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
-		REQUIRE(((counts[3] >= 2 && counts[4] == 0) || (counts[4] == 1)));
 		REQUIRE(0 == counts[0]); // No isolated pixels
 	}
 
@@ -197,10 +265,32 @@ TEST_CASE("Intersection Point", "[Intersection]")
 			{ fbwidth - (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(30.f * 3.1415 / 180.0f)), fbheight * 1.f },
 			{ 255, 255, 255 }
 		);
+
+		Vec2f midPoint = { fbwidth / 2.f, fbheight / 2.f };
+		auto const stride = surface.get_width() << 2;
+		std::size_t inCol = 0;
+		for (std::uint32_t y = 0; y < surface.get_height(); ++y)
+		{
+			auto const idx = y * stride + (static_cast<std::uint32_t>(midPoint.x) << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inCol;
+		}
+		std::size_t inRow = 0;
+		for (std::uint32_t x = 0; x < surface.get_width(); ++x)
+		{
+			auto const idx = static_cast<std::uint32_t>(midPoint.y) * stride + (x << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inRow;
+		}
+		REQUIRE(std::min(inCol, inRow) == 1);
+
 		auto const counts = count_pixel_neighbours(surface);
 		REQUIRE(counts[1] == 4); // Four endpoints with one neighbor each
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
-		REQUIRE(((counts[3] >= 2 && counts[4] == 0) || (counts[4] == 1)));
 		REQUIRE(0 == counts[0]); // No isolated pixels
 	}
 
@@ -216,10 +306,32 @@ TEST_CASE("Intersection Point", "[Intersection]")
 			{ fbwidth - (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(45.f * 3.1415 / 180.0f)), fbheight * 1.f },
 			{ 255, 255, 255 }
 		);
+
+		Vec2f midPoint = { fbwidth / 2.f, fbheight / 2.f };
+		auto const stride = surface.get_width() << 2;
+		std::size_t inCol = 0;
+		for (std::uint32_t y = 0; y < surface.get_height(); ++y)
+		{
+			auto const idx = y * stride + (static_cast<std::uint32_t>(midPoint.x) << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inCol;
+		}
+		std::size_t inRow = 0;
+		for (std::uint32_t x = 0; x < surface.get_width(); ++x)
+		{
+			auto const idx = static_cast<std::uint32_t>(midPoint.y) * stride + (x << 2);
+			auto const ptr = surface.get_surface_ptr() + idx;
+
+			if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+				++inRow;
+		}
+		REQUIRE(std::min(inCol, inRow) == 1);
+
 		auto const counts = count_pixel_neighbours(surface);
 		REQUIRE(counts[1] == 4); // Four endpoints with one neighbor each
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
-		REQUIRE(((counts[3] >= 2 && counts[4] == 0) || (counts[4] == 1)));
 		REQUIRE(0 == counts[0]); // No isolated pixels
 	}
 
@@ -235,9 +347,9 @@ TEST_CASE("Intersection Point", "[Intersection]")
 			{ 150.f, 50.f },
 			{ 255, 255, 255 }
 		);
+
 		auto const counts = count_pixel_neighbours(surface);
 		REQUIRE(4 == counts[1]); // Four endpoints with one neighbor each
-		REQUIRE(((counts[3] >= 2 && counts[4] == 0) || (counts[4] == 1)));
 		REQUIRE(counts[2] > 0);  // Pixels along the lines with two neighbors
 		REQUIRE(0 == counts[0]); // No isolated pixels
 	}

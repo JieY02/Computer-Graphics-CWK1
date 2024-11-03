@@ -195,15 +195,16 @@ int main( int aArgc, char* aArgv[] ) try
 					{ 255, 255, 0 }
 				);*/
 				draw_line_solid( surface, 
-					{ 0.f, 0.f}, { float(fbwidth), float(fbheight) },
-					{ 255, 255, 0 }
+					{ 100.f, 100.f}, 
+					{ 110.f, 400.f },
+					{ 255, 255, 255 }
 				);
 
 			} break;
 			case 2: {
 				// Just a diagonal line, "reverse"
 				draw_line_solid( surface, 
-					{ fbwidth-100.f, fbheight-100.f }, { 100.f, 100.f}, 
+					{ 100.f, 100.f }, { 400.f, 110.f}, 
 					{ 255, 255, 0 }
 				);
 			} break;
