@@ -49,14 +49,26 @@ std::unique_ptr<ImageRGBA> load_image( char const* aPath )
 	);
 }
 
-void blit_masked( Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition )
+void blit_masked(Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition)
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	(void)aSurface;  // Avoid warnings about unused arguments until the
-	(void)aImage;    // function is properly implemented.
-	(void)aPosition;
+	int startX = static_cast<int>(round(aPosition.x));
+	int startY = static_cast<int>(round(aPosition.y));
+
+	for (int y = 0; y < aImage.get_height(); ++y) {
+		for (int x = 0; x < aImage.get_width(); ++x) {
+			ColorU8_sRGB_Alpha color = aImage.get_pixel(x, y);
+
+			if (color.a >= 128) {
+				int targetX = startX + x;
+				int targetY = startY + y;
+
+				if (targetX >= 0 && targetX < aSurface.get_width() &&
+					targetY >= 0 && targetY < aSurface.get_height()) {
+					aSurface.set_pixel_srgb(targetX, targetY, { color.r, color.g, color.b });
+				}
+			}
+		}
+	}
 }
 
 namespace

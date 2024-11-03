@@ -191,14 +191,21 @@ int main( int aArgc, char* aArgv[] ) try
 			case 1: {
 				// Centered triangle
 				draw_triangle_interp( surface, 
-					{ fbwidth/2.f, fbheight-100.f },
-					{ 100.f, 100.f },
-					{ fbwidth-100.f, 100.f },
+					{ -1.f * fbwidth , fbheight / 2.f },
+					{ fbwidth / 2.f + 10.f, fbheight / 2.f + 10.f },
+					{ 2.f * fbwidth , fbheight / 2.f },
 					{ 1.f, 1.f, 0.f },
 					{ 1.f, 0.f, 1.f },
 					{ 0.f, 1.f, 1.f }
 				);
-
+				draw_triangle_interp(surface,
+					{ -1.f * fbwidth + 1.f , fbheight / 2.f + 1.f},
+					{ fbwidth / 2.f + 10.f, fbheight / 2.f + 9.f },
+					{ 2.f * fbwidth - 1.f, fbheight / 2.f  +1.f},
+					{ 0.f, 0.f, 0.f },
+					{ 0.f, 0.f, 0.f },
+					{ 0.f, 0.f, 0.f }
+				);
 			} break;
 
 			case 2: {
@@ -227,6 +234,81 @@ int main( int aArgc, char* aArgv[] ) try
 
 			//TODO: your own sample cases here?
 			//TODO: your own sample cases here?
+
+			case 4: {
+				// 1-degree
+				draw_triangle_interp(surface,
+					{ 0.f, fbheight / 2.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(1.f * 3.14 / 180.f) },
+					{ 1.f, 1.f, 0.f },
+					{ 1.f, 0.f, 1.f },
+					{ 0.f, 1.f, 1.f }
+				);
+			} break;
+
+			case 5: {
+				// 10-degree
+				draw_triangle_interp(surface,
+					{ 0.f, fbheight / 2.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(10.f * 3.14 / 180.f) },
+					{ 1.f, 1.f, 0.f },
+					{ 1.f, 0.f, 1.f },
+					{ 0.f, 1.f, 1.f }
+				);
+			} break;
+
+			case 6: {
+				// 15-degree
+				draw_triangle_interp(surface,
+					{ 0.f, fbheight / 2.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(15.f * 3.14 / 180.f) },
+					{ 1.f, 1.f, 0.f },
+					{ 1.f, 0.f, 1.f },
+					{ 0.f, 1.f, 1.f }
+				);
+			} break;
+				 
+			case 7: {
+				// 1 degree triangle
+				draw_triangle_solid(surface,
+					{ 0.f, fbheight / 2.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(1.f * 3.14 / 180.f) },
+					{ 255,255,0 }
+				);
+			} break;
+
+			case 8: {
+				// 10 degree triangle
+				draw_triangle_solid(surface,
+					{ 0.f, fbheight / 2.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(10.f * 3.14 / 180.f) },
+					{ 255,255,0 }
+				);
+			} break;
+
+			case 9: {
+				// 15 degree triangle
+				draw_triangle_solid(surface,
+					{ 0.f, fbheight / 2.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float)std::tan(15.f * 3.14 / 180.f) },
+					{ 255,255,0 }
+				);
+			} break;
+			case 0: {
+				// 1 degree triangle
+				draw_triangle_solid(surface,
+					{ 0.f, 0.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(1.f * 3.1415 / 180.0f)), 0.f },
+					{ 255,255,0 }
+				);
+			} break;
 		}
 		
 		context.draw( surface );

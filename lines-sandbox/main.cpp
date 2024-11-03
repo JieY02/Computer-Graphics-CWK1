@@ -195,15 +195,16 @@ int main( int aArgc, char* aArgv[] ) try
 					{ 255, 255, 0 }
 				);*/
 				draw_line_solid( surface, 
-					{ 0.f, 0.f}, { float(fbwidth), float(fbheight) },
-					{ 255, 255, 0 }
+					{ 100.f, 100.f}, 
+					{ 110.f, 400.f },
+					{ 255, 255, 255 }
 				);
 
 			} break;
 			case 2: {
 				// Just a diagonal line, "reverse"
 				draw_line_solid( surface, 
-					{ fbwidth-100.f, fbheight-100.f }, { 100.f, 100.f}, 
+					{ 100.f, 100.f }, { 400.f, 110.f}, 
 					{ 255, 255, 0 }
 				);
 			} break;
@@ -224,8 +225,71 @@ int main( int aArgc, char* aArgv[] ) try
 				);
 			} break;
 
-			//TODO: your own sample cases here?
-			//TODO: your own sample cases here?
+			case 5: {
+				// 1 - degree angle
+				draw_line_solid(surface,
+					{ 0.f, 0.f },
+					{ fbwidth * 1.f, fbheight * 1.f},
+					{ 255, 255, 255 }
+				);
+				draw_line_solid(surface,
+					{ (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(1.f * 3.1415 / 180.0f)), 0.f },
+					{ fbwidth - (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(1.f * 3.1415 / 180.0f)), fbheight * 1.f },
+					{ 255, 255, 255 }
+				);
+			} break;
+			case 6: {
+				// 10 - degree angle
+				draw_line_solid(surface,
+					{ 0.f, 0.f },
+					{ fbwidth * 1.f, fbheight * 1.f },
+					{ 255, 255, 255 }
+				);
+				draw_line_solid(surface,
+					{ (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(10.f * 3.1415 / 180.0f)), 0.f },
+					{ fbwidth - (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(10.f * 3.1415 / 180.0f)), fbheight * 1.f },
+					{ 255, 255, 255 }
+				);
+			} break;
+			case 7: {
+				// 15 - degree angle
+				draw_line_solid(surface,
+					{ 0.f, 0.f },
+					{ fbwidth * 1.f, fbheight * 1.f },
+					{ 255, 255, 255 }
+				);
+				draw_line_solid(surface,
+					{ (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(15.f * 3.1415 / 180.0f)), 0.f },
+					{ fbwidth - (std::sqrt((fbwidth / 2.0f) * (fbwidth / 2.0f) + (fbheight / 2.0f) * (fbheight / 2.0f)) * (float)std::sin(15.f * 3.1415 / 180.0f)), fbheight * 1.f },
+					{ 255, 255, 255 }
+				);
+			} break;
+			case 8: {
+				// 30 - degree angle
+				draw_line_solid(surface,
+					{ 0.f, fbheight / 2.f },
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 255, 255, 255 }
+				);
+				draw_line_solid(surface,
+					{ fbwidth / 2.f, fbheight / 2.f },
+					{ 0.f,fbheight / 2.f + fbwidth / 2.f * (float) std::tan(20.f * 3.14 / 180.f)},
+					{ 255, 255, 255 }
+				);
+			} break;
+			case 9: {
+				// Cover
+				draw_line_solid(surface,
+					{ 165.f, 0.f },
+					{ 160.f, 240.f },
+					{ 255, 0, 0 }
+				);
+				draw_line_solid(surface,
+					{ 160.f, 240.f },
+					{ 165.f, 0.f },
+					{ 255, 255, 255 }
+				);
+			} break;
 		}
 		
 		context.draw( surface );
