@@ -191,12 +191,20 @@ int main( int aArgc, char* aArgv[] ) try
 			case 1: {
 				// Centered triangle
 				draw_triangle_interp( surface, 
-					{ fbwidth/2.f, fbheight-100.f },
-					{ 100.f, 100.f },
-					{ fbwidth-100.f, 100.f },
+					{ -1.f * fbwidth , fbheight / 2.f },
+					{ fbwidth / 2.f + 10.f, fbheight / 2.f + 10.f },
+					{ 2.f * fbwidth , fbheight / 2.f },
 					{ 1.f, 1.f, 0.f },
 					{ 1.f, 0.f, 1.f },
 					{ 0.f, 1.f, 1.f }
+				);
+				draw_triangle_interp(surface,
+					{ -1.f * fbwidth + 1.f , fbheight / 2.f + 1.f},
+					{ fbwidth / 2.f + 10.f, fbheight / 2.f + 9.f },
+					{ 2.f * fbwidth - 1.f, fbheight / 2.f  +1.f},
+					{ 0.f, 0.f, 0.f },
+					{ 0.f, 0.f, 0.f },
+					{ 0.f, 0.f, 0.f }
 				);
 			} break;
 
